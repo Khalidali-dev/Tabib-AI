@@ -11,7 +11,7 @@
 
 **Air-gapped on-device clinical decision support and triage system powered by local quantized neural weights, deterministic pharmacology limits, and sub-millisecond emergency red-flag interceptors.**
 
-[Web Demo & Landing Page](https://tabib-ai-blue.vercel.app) • [Direct Download Android APK (Google Drive)](https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing)
+[Web Demo & Landing Page](https://tabib-clinical.vercel.app) • [Direct Download Android APK (Google Drive)](https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing) • [GitHub Repository](https://github.com/Khalidali-dev/Tabib-AI)
 
 </div>
 
