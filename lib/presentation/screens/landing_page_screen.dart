@@ -10,6 +10,9 @@ class LandingPageScreen extends StatefulWidget {
 }
 
 class _LandingPageScreenState extends State<LandingPageScreen> {
+  static const String _apkDownloadUrl =
+      'https://drive.google.com/file/d/185kvQRJAmwQjuVN406KyEDE1FtKkqSFd/view?usp=sharing';
+
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _featuresKey = GlobalKey();
   final GlobalKey _architectureKey = GlobalKey();
@@ -224,7 +227,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onPressed: () {
-        _launchExternalUrl('https://github.com/mian-khalid/Tabib-AI/releases');
+        _launchExternalUrl(_apkDownloadUrl);
       },
       icon: const Icon(Icons.download_rounded, size: 18),
       label: const Text(
@@ -313,7 +316,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 ),
                 onPressed: () {
                   Navigator.pop(context);
-                  _launchExternalUrl('https://github.com/mian-khalid/Tabib-AI/releases');
+                  _launchExternalUrl(_apkDownloadUrl);
                 },
                 icon: const Icon(Icons.download_rounded, size: 18),
                 label: const Text('Download Android APK', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -413,7 +416,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
-                      _launchExternalUrl('https://github.com/mian-khalid/Tabib-AI/releases');
+                      _launchExternalUrl(_apkDownloadUrl);
                     },
                     icon: const Icon(Icons.android_rounded, size: 22),
                     label: const Text(
@@ -1192,7 +1195,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
-                      _launchExternalUrl('https://github.com/mian-khalid/Tabib-AI/releases');
+                      _launchExternalUrl(_apkDownloadUrl);
                     },
                     icon: const Icon(Icons.android_rounded, size: 22),
                     label: const Text(

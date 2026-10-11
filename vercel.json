@@ -1,5 +1,5 @@
 {
-  "buildCommand": "flutter build web --release --web-renderer canvaskit",
+  "buildCommand": "flutter build web --release",
   "outputDirectory": "build/web",
   "cleanUrls": true,
   "rewrites": [

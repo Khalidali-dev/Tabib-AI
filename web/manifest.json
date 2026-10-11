@@ -1,11 +1,11 @@
 {
-    "name": "tabib",
-    "short_name": "tabib",
+    "name": "Tabib AI - Offline Medical Doctor",
+    "short_name": "Tabib AI",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0D9488",
+    "theme_color": "#0D9488",
+    "description": "Production-Grade Offline Medical AI Doctor powered by Edge LLM & Clinical Knowledge Engine.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
