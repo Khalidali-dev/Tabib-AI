@@ -11,7 +11,7 @@
 
 **Air-gapped on-device clinical decision support and triage system powered by local quantized neural weights, deterministic pharmacology limits, and sub-millisecond emergency red-flag interceptors.**
 
-[Web Demo & Landing Page](https://tabib-ai.vercel.app) • [Download Android APK](#download--installation) • [Clinical Safety Architecture](#clinical-safety-architecture) • [Pharmacology Engine](#deterministic-pharmacology--pediatric-math)
+[Web Demo & Landing Page](https://tabib-ai-blue.vercel.app) • [Direct Download Android APK (Google Drive)](https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing) • [GitHub Repository](https://github.com/Khalidali-dev/Tabib-AI)
 
 </div>
 
@@ -88,7 +88,7 @@ $$\text{Maximum 24h Ceiling} = \text{Weight (kg)} \times 60\text{ mg/kg/day}$$
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/mian-khalid/Tabib-AI.git
+git clone https://github.com/Khalidali-dev/Tabib-AI.git
 cd Tabib-AI
 
 # 2. Install Flutter packages
@@ -107,6 +107,9 @@ Because `llamadart` includes optimized C++ binaries for ARM and x86_64 architect
 ```bash
 # Build per-ABI APKs (Recommended for physical devices)
 flutter build apk --release --split-per-abi
+
+# Direct Download:
+# Google Drive Release APK: https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing
 
 # Target output:
 # build/app/outputs/flutter-apk/app-arm64-v8a-release.apk (~85 MB)

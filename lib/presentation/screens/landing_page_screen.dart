@@ -11,7 +11,9 @@ class LandingPageScreen extends StatefulWidget {
 
 class _LandingPageScreenState extends State<LandingPageScreen> {
   static const String _apkDownloadUrl =
-      'https://drive.google.com/file/d/185kvQRJAmwQjuVN406KyEDE1FtKkqSFd/view?usp=sharing';
+      'https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing';
+  static const String _githubRepoUrl =
+      'https://github.com/Khalidali-dev/Tabib-AI';
 
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _featuresKey = GlobalKey();
@@ -433,7 +435,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       backgroundColor: Colors.white,
                     ),
                     onPressed: () {
-                      _launchExternalUrl('https://github.com/mian-khalid/Tabib-AI');
+                      _launchExternalUrl(_githubRepoUrl);
                     },
                     icon: const Icon(Icons.code_rounded, size: 20),
                     label: const Text(
@@ -1211,7 +1213,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
-                      _launchExternalUrl('https://github.com/mian-khalid/Tabib-AI#readme');
+                      _launchExternalUrl('$_githubRepoUrl#readme');
                     },
                     icon: const Icon(Icons.menu_book_rounded, size: 20),
                     label: const Text(
@@ -1273,7 +1275,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   TextButton.icon(
                     style: TextButton.styleFrom(foregroundColor: const Color(0xFF94A3B8)),
                     onPressed: () {
-                      _launchExternalUrl('https://github.com/mian-khalid/Tabib-AI');
+                      _launchExternalUrl(_githubRepoUrl);
                     },
                     icon: const Icon(Icons.open_in_new_rounded, size: 16),
                     label: const Text('GitHub Repository'),
