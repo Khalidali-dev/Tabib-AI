@@ -11,7 +11,7 @@
 
 **Air-gapped on-device clinical decision support and triage system powered by local quantized neural weights, deterministic pharmacology limits, and sub-millisecond emergency red-flag interceptors.**
 
-[Web Demo & Landing Page](https://tabib-clinical.vercel.app) • [Direct Download Android APK (Google Drive)](https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing)
+[Web Demo & Landing Page](https://tabib-clinical.vercel.app) • [Direct Download Android APK (Google Drive)](https://drive.google.com/file/d/1b75-MXkmWT95j_rva-nWpe_EkNNAYgj3/view?usp=sharing)
 
 </div>
 
@@ -109,7 +109,7 @@ Because `llamadart` includes optimized C++ binaries for ARM and x86_64 architect
 flutter build apk --release --split-per-abi
 
 # Direct Download:
-# Google Drive Release APK: https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing
+# Google Drive Release APK: https://drive.google.com/file/d/1b75-MXkmWT95j_rva-nWpe_EkNNAYgj3/view?usp=sharing
 
 # Target output:
 # build/app/outputs/flutter-apk/app-arm64-v8a-release.apk (~85 MB)

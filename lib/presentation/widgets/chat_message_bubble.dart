@@ -64,7 +64,9 @@ class VerifiedCitationsCard extends StatelessWidget {
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
+        child: Material(
+          color: Colors.transparent,
+          child: ExpansionTile(
           dense: true,
           initiallyExpanded: false,
           tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
@@ -194,6 +196,7 @@ class VerifiedCitationsCard extends StatelessWidget {
               ),
             );
           }).toList(),
+        ),
         ),
       ),
     );

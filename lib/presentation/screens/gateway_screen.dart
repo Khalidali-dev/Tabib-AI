@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../tabib.dart';
 
 class GatewayScreen extends StatefulWidget {
@@ -14,7 +16,6 @@ class _GatewayScreenState extends State<GatewayScreen>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
-
   late AnimationController _entranceController;
   late Animation<double> _logoScale;
   late Animation<double> _logoFade;
@@ -54,15 +55,13 @@ class _GatewayScreenState extends State<GatewayScreen>
       ),
     );
 
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0.0, 0.35),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
-      ),
-    );
+    _textSlide = Tween<Offset>(begin: const Offset(0.0, 0.35), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _textFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -221,7 +220,8 @@ class _GatewayScreenState extends State<GatewayScreen>
                       return FadeTransition(
                         opacity: _logoFade,
                         child: Transform.scale(
-                          scale: _logoScale.value *
+                          scale:
+                              _logoScale.value *
                               (_entranceController.isCompleted
                                   ? _pulseAnimation.value
                                   : 1.0),
@@ -354,8 +354,8 @@ class _GatewayScreenState extends State<GatewayScreen>
                         color: const Color(0xFF0D9488).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                          color:
-                              const Color(0xFF0D9488).withValues(alpha: 0.35),
+                          color: const Color(0xFF0D9488)
+                              .withValues(alpha: 0.35),
                           width: 1.2,
                         ),
                       ),

@@ -11,7 +11,7 @@ class LandingPageScreen extends StatefulWidget {
 
 class _LandingPageScreenState extends State<LandingPageScreen> {
   static const String _apkDownloadUrl =
-      'https://drive.google.com/file/d/1eLV0ZbdF3gLoUKROO57Ct1_RZ2HTiXrn/view?usp=sharing';
+      'https://drive.google.com/file/d/1b75-MXkmWT95j_rva-nWpe_EkNNAYgj3/view?usp=sharing';
   static const String _githubRepoUrl =
       'https://github.com/Khalidali-dev/Tabib-AI';
 
@@ -57,28 +57,28 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(72),
-        child: _buildNavigationBar(isMobile, isDark),
+        child: _buildNavigationBar(isMobile, isDark, screenWidth),
       ),
       endDrawer: isMobile ? _buildMobileDrawer(context) : null,
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
           children: [
-            _buildHeroSection(isMobile),
-            _buildFeatureBadgesBar(isMobile),
-            _buildInteractiveMockupSection(isMobile),
-            _buildArchitecturalPillars(isMobile),
-            _buildLiveWorkflowShowcase(isMobile),
-            _buildSafetySpecsMatrix(isMobile),
-            _buildCtaBanner(isMobile),
-            _buildFooter(isMobile),
+            _buildHeroSection(isMobile, screenWidth),
+            _buildFeatureBadgesBar(isMobile, screenWidth),
+            _buildInteractiveMockupSection(isMobile, screenWidth),
+            _buildArchitecturalPillars(isMobile, screenWidth),
+            _buildLiveWorkflowShowcase(isMobile, screenWidth),
+            _buildSafetySpecsMatrix(isMobile, screenWidth),
+            _buildCtaBanner(isMobile, screenWidth),
+            _buildFooter(isMobile, screenWidth),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavigationBar(bool isMobile, bool isDark) {
+  Widget _buildNavigationBar(bool isMobile, bool isDark, double screenWidth) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.95),
@@ -93,7 +93,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 24),
       child: SafeArea(
         bottom: false,
         child: Center(
@@ -188,7 +188,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 ] else ...[
                   Builder(
                     builder: (ctx) => IconButton(
-                      icon: const Icon(Icons.menu_rounded, color: Color(0xFF0F172A)),
+                      icon: const Icon(Icons.menu_rounded, color: Color(0xFF0F172A), size: 26),
                       onPressed: () => Scaffold.of(ctx).openEndDrawer(),
                     ),
                   ),
@@ -244,7 +244,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
       backgroundColor: Colors.white,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -279,33 +279,45 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   ),
                 ],
               ),
-              const Divider(height: 32),
+              const Divider(height: 24),
               ListTile(
-                title: const Text('Features', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(Icons.featured_play_list_outlined, color: Color(0xFF0D9488), size: 20),
+                title: const Text('Features & Workflow', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_featuresKey);
                 },
               ),
               ListTile(
-                title: const Text('Architecture', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(Icons.account_tree_outlined, color: Color(0xFF0D9488), size: 20),
+                title: const Text('Architecture', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_architectureKey);
                 },
               ),
               ListTile(
-                title: const Text('Safety Core', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(Icons.verified_user_outlined, color: Color(0xFF0D9488), size: 20),
+                title: const Text('Safety Core Matrix', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_safetyKey);
                 },
               ),
               ListTile(
-                title: const Text('Documentation', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(Icons.description_outlined, color: Color(0xFF0D9488), size: 20),
+                title: const Text('Documentation', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_docsKey);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.code_rounded, color: Color(0xFF0D9488), size: 20),
+                title: const Text('GitHub Source', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _launchExternalUrl(_githubRepoUrl);
                 },
               ),
               const Spacer(),
@@ -313,15 +325,16 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0D9488),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 2,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
                   _launchExternalUrl(_apkDownloadUrl);
                 },
-                icon: const Icon(Icons.download_rounded, size: 18),
-                label: const Text('Download Android APK', style: TextStyle(fontWeight: FontWeight.w700)),
+                icon: const Icon(Icons.download_rounded, size: 20),
+                label: const Text('Download Android APK (v1.0)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
               ),
             ],
           ),
@@ -330,12 +343,12 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     );
   }
 
-  Widget _buildHeroSection(bool isMobile) {
+  Widget _buildHeroSection(bool isMobile, double screenWidth) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 40,
-        vertical: isMobile ? 48 : 80,
+        horizontal: isMobile ? 18 : 40,
+        vertical: isMobile ? 40 : 80,
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -353,68 +366,71 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(
                   color: const Color(0xFFCCFBF1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: const Color(0xFF99F6E4)),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.verified_user_rounded, color: Color(0xFF0F766E), size: 16),
-                    AppGap.w8,
-                    Text(
-                      'CLINICAL DECISION SUPPORT • 100% AIR-GAPPED PRIVACY',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.6,
-                        color: Color(0xFF0F766E),
+                    const Icon(Icons.verified_user_rounded, color: Color(0xFF0F766E), size: 15),
+                    AppGap.w6,
+                    Flexible(
+                      child: Text(
+                        screenWidth < 400
+                            ? '100% AIR-GAPPED CLINICAL SUPPORT'
+                            : 'CLINICAL DECISION SUPPORT • 100% AIR-GAPPED PRIVACY',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: screenWidth < 400 ? 10.5 : 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                          color: const Color(0xFF0F766E),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              AppGap.h24,
+              AppGap.h20,
               Text(
                 'On-Device Clinical Intelligence.\nZero Cloud. Total Privacy.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: isMobile ? 32 : 56,
+                  fontSize: screenWidth < 380 ? 26 : (isMobile ? 32 : 56),
                   height: 1.15,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: -1.2,
+                  letterSpacing: isMobile ? -0.8 : -1.2,
                   color: const Color(0xFF0F172A),
                 ),
               ),
-              AppGap.h20,
+              AppGap.h16,
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 780),
                 child: Text(
                   'Tabib AI is an offline clinical decision support and triage assistant engineered for physicians, clinical officers, and remote healthcare facilities. Powered by local neural inference and deterministic pharmacology safety guardrails.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: isMobile ? 16 : 19,
+                    fontSize: isMobile ? 14.5 : 19,
                     height: 1.6,
                     color: const Color(0xFF475569),
                     fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
-              AppGap.h32,
-              Wrap(
-                spacing: 16,
-                runSpacing: 12,
-                alignment: WrapAlignment.center,
-                children: [
-                  ElevatedButton.icon(
+              AppGap.h28,
+              if (isMobile) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0D9488),
                       foregroundColor: Colors.white,
                       elevation: 2,
                       shadowColor: const Color(0xFF0D9488).withValues(alpha: 0.4),
-                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
@@ -423,14 +439,18 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                     icon: const Icon(Icons.android_rounded, size: 22),
                     label: const Text(
                       'Download APK (Release v1.0)',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                     ),
                   ),
-                  OutlinedButton.icon(
+                ),
+                AppGap.h12,
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF0F172A),
                       side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       backgroundColor: Colors.white,
                     ),
@@ -440,11 +460,54 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                     icon: const Icon(Icons.code_rounded, size: 20),
                     label: const Text(
                       'View Source on GitHub',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ] else ...[
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0D9488),
+                        foregroundColor: Colors.white,
+                        elevation: 2,
+                        shadowColor: const Color(0xFF0D9488).withValues(alpha: 0.4),
+                        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () {
+                        _launchExternalUrl(_apkDownloadUrl);
+                      },
+                      icon: const Icon(Icons.android_rounded, size: 22),
+                      label: const Text(
+                        'Download APK (Release v1.0)',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF0F172A),
+                        side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        backgroundColor: Colors.white,
+                      ),
+                      onPressed: () {
+                        _launchExternalUrl(_githubRepoUrl);
+                      },
+                      icon: const Icon(Icons.code_rounded, size: 20),
+                      label: const Text(
+                        'View Source on GitHub',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
@@ -452,7 +515,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     );
   }
 
-  Widget _buildFeatureBadgesBar(bool isMobile) {
+  Widget _buildFeatureBadgesBar(bool isMobile, double screenWidth) {
     final badges = [
       {'icon': Icons.cloud_off_rounded, 'title': '100% Offline', 'subtitle': 'No API keys required'},
       {'icon': Icons.lock_outline_rounded, 'title': 'Total HIPAA Privacy', 'subtitle': 'Data never leaves phone'},
@@ -463,62 +526,111 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     return Container(
       width: double.infinity,
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: isMobile ? 18 : 24, horizontal: isMobile ? 16 : 20),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1100),
-          child: Wrap(
-            alignment: WrapAlignment.spaceEvenly,
-            spacing: 24,
-            runSpacing: 16,
-            children: badges.map((b) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDFA),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(b['icon'] as IconData, color: const Color(0xFF0D9488), size: 20),
-                  ),
-                  AppGap.w12,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        b['title'] as String,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0F172A),
-                        ),
+          child: isMobile
+              ? Column(
+                  children: badges.map((b) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
                       ),
-                      Text(
-                        b['subtitle'] as String,
-                        style: const TextStyle(
-                          fontSize: 11.5,
-                          color: Color(0xFF64748B),
-                        ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF0FDFA),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(b['icon'] as IconData, color: const Color(0xFF0D9488), size: 20),
+                          ),
+                          AppGap.w12,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  b['title'] as String,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF0F172A),
+                                  ),
+                                ),
+                                Text(
+                                  b['subtitle'] as String,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF64748B),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
+                    );
+                  }).toList(),
+                )
+              : Wrap(
+                  alignment: WrapAlignment.spaceEvenly,
+                  spacing: 24,
+                  runSpacing: 16,
+                  children: badges.map((b) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF0FDFA),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(b['icon'] as IconData, color: const Color(0xFF0D9488), size: 20),
+                        ),
+                        AppGap.w12,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              b['title'] as String,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF0F172A),
+                              ),
+                            ),
+                            Text(
+                              b['subtitle'] as String,
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
         ),
       ),
     );
   }
 
-  Widget _buildInteractiveMockupSection(bool isMobile) {
+  Widget _buildInteractiveMockupSection(bool isMobile, double screenWidth) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 40,
-        vertical: isMobile ? 40 : 64,
+        horizontal: isMobile ? 14 : 40,
+        vertical: isMobile ? 32 : 64,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -526,7 +638,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(color: const Color(0xFFE2E8F0)),
               boxShadow: [
                 BoxShadow(
@@ -540,10 +652,10 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: const BoxDecoration(
                     color: Color(0xFFF8FAFC),
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                     border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
                   ),
                   child: Row(
@@ -553,56 +665,62 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       Container(width: 10, height: 10, decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle)),
                       AppGap.w6,
                       Container(width: 10, height: 10, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
-                      AppGap.w16,
+                      AppGap.w12,
                       const Icon(Icons.shield_rounded, size: 15, color: Color(0xFF0D9488)),
                       AppGap.w6,
-                      const Text(
-                        'Tabib Air-Gapped Clinical Console • On-Device Llama Engine (Q4_K_M)',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF475569),
+                      const Expanded(
+                        child: Text(
+                          'Tabib Air-Gapped Clinical Console • On-Device Llama Engine (Q4_K_M)',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF475569),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(isMobile ? 18 : 28),
+                  padding: EdgeInsets.all(isMobile ? 14 : 28),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF1F5F9),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
                         child: const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CircleAvatar(
-                              radius: 16,
+                              radius: 14,
                               backgroundColor: Color(0xFF0D9488),
-                              child: Icon(Icons.person_outline_rounded, color: Colors.white, size: 18),
+                              child: Icon(Icons.person_outline_rounded, color: Colors.white, size: 16),
                             ),
-                            AppGap.w12,
+                            AppGap.w10,
                             Expanded(
                               child: Text(
                                 'Patient: 28-year-old female presenting with 2-day bilateral throbbing headache, mild photophobia, no fever, no focal neurological deficits.',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 13.5,
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xFF1E293B),
+                                  height: 1.45,
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      AppGap.h20,
+                      AppGap.h16,
                       Container(
-                        padding: const EdgeInsets.all(18),
+                        padding: EdgeInsets.all(isMobile ? 14 : 18),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF0FDFA),
                           borderRadius: BorderRadius.circular(14),
@@ -613,30 +731,30 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                           children: [
                             const Row(
                               children: [
-                                Icon(Icons.medical_services_rounded, color: Color(0xFF0D9488), size: 20),
+                                Icon(Icons.medical_services_rounded, color: Color(0xFF0D9488), size: 18),
                                 AppGap.w8,
                                 Text(
-                                  '### 🩺 Clinical Assessment',
+                                  'Clinical Assessment',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 15,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF0D9488),
                                   ),
                                 ),
                               ],
                             ),
-                            AppGap.h10,
+                            AppGap.h8,
                             const Text(
                               'Symptom constellation is clinically suggestive of episodic tension-type headache or mild migraine without aura. No intracranial red flags or meningeal signs noted.',
                               style: TextStyle(
-                                fontSize: 14,
-                                height: 1.55,
+                                fontSize: 13.5,
+                                height: 1.5,
                                 color: Color(0xFF1E293B),
                               ),
                             ),
-                            AppGap.h16,
+                            AppGap.h14,
                             Container(
-                              padding: const EdgeInsets.all(14),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -646,32 +764,33 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '### 💊 Verified Medication & Dosage',
+                                    '💊 Verified Medication & Dosage',
                                     style: TextStyle(
-                                      fontSize: 14.5,
+                                      fontSize: 13.5,
                                       fontWeight: FontWeight.w700,
                                       color: Color(0xFF0D9488),
                                     ),
                                   ),
                                   AppGap.h6,
                                   Text(
-                                    '• Generic Name: Paracetamol (Panadol, Calpol)\n• Therapeutic Class: Analgesic & Antipyretic\n• Verified Adult Dose: 500 mg to 1000 mg every 4-6 hours PO as needed\n• Ceiling Limit: 4000 mg (4 grams / 8 x 500mg tablets) per 24 hours\n• Absolute Contraindications: Severe active hepatic failure, acute hepatitis',
+                                    '• Generic Name: Paracetamol (Panadol, Calpol)\n• Therapeutic Class: Analgesic & Antipyretic\n• Verified Adult Dose: 500 mg to 1000 mg every 4-6 hours PO PRN\n• Ceiling Limit: 4000 mg (4 grams / 8 x 500mg tablets) per 24 hours\n• Absolute Contraindications: Severe active hepatic failure, acute hepatitis',
                                     style: TextStyle(
-                                      fontSize: 13,
-                                      height: 1.6,
+                                      fontSize: 12.5,
+                                      height: 1.55,
                                       color: Color(0xFF334155),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            AppGap.h16,
+                            AppGap.h14,
                             const Text(
-                              '### 🚨 Emergency Red Flags\n• Sudden severe "thunderclap" headache reaching peak intensity in seconds.\n• Any new focal neurologic deficits (facial droop, arm weakness, speech slurring).\n• Onset with high fever, neck stiffness, confusion, or rash (Dial emergency services immediately).',
+                              '🚨 Emergency Red Flags\n• Sudden severe "thunderclap" headache reaching peak intensity in seconds.\n• Any new focal neurologic deficits (facial droop, arm weakness, speech slurring).\n• Onset with high fever, neck stiffness, confusion, or rash (Dial emergency services immediately).',
                               style: TextStyle(
-                                fontSize: 13,
-                                height: 1.55,
+                                fontSize: 12.5,
+                                height: 1.5,
                                 color: Color(0xFFDC2626),
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -688,7 +807,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     );
   }
 
-  Widget _buildArchitecturalPillars(bool isMobile) {
+  Widget _buildArchitecturalPillars(bool isMobile, double screenWidth) {
     final pillars = [
       {
         'icon': Icons.memory_rounded,
@@ -733,8 +852,8 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
       width: double.infinity,
       color: Colors.white,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 40,
-        vertical: isMobile ? 48 : 80,
+        horizontal: isMobile ? 18 : 40,
+        vertical: isMobile ? 40 : 80,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -755,64 +874,57 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 'Clinical Safety by Mathematical Architecture',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: isMobile ? 26 : 38,
+                  fontSize: isMobile ? 24 : 38,
                   fontWeight: FontWeight.w800,
                   color: const Color(0xFF0F172A),
                   letterSpacing: -0.5,
                 ),
               ),
-              AppGap.h16,
+              AppGap.h14,
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 700),
                 child: const Text(
                   'Generative models must not act as unconstrained clinical authorities. Tabib AI sandwiches local neural reasoning between deterministic gatekeepers and pharmacology guardrails.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Color(0xFF64748B), height: 1.55),
+                  style: TextStyle(fontSize: 15, color: Color(0xFF64748B), height: 1.55),
                 ),
               ),
-              AppGap.h48,
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isMobile ? 1 : (MediaQuery.of(context).size.width < 1000 ? 2 : 3),
-                  crossAxisSpacing: 24,
-                  mainAxisSpacing: 24,
-                  childAspectRatio: isMobile ? 1.9 : 1.35,
-                ),
-                itemCount: pillars.length,
-                itemBuilder: (context, index) {
-                  final p = pillars[index];
-                  return Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8FAFC),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0D9488).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(10),
+              AppGap.h32,
+              if (isMobile)
+                Column(
+                  children: pillars.map((p) {
+                    return Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0D9488).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(p['icon'] as IconData, color: const Color(0xFF0D9488), size: 22),
                           ),
-                          child: Icon(p['icon'] as IconData, color: const Color(0xFF0D9488), size: 24),
-                        ),
-                        AppGap.h16,
-                        Text(
-                          p['title'] as String,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF0F172A),
+                          AppGap.h14,
+                          Text(
+                            p['title'] as String,
+                            style: const TextStyle(
+                              fontSize: 16.5,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF0F172A),
+                            ),
                           ),
-                        ),
-                        AppGap.h8,
-                        Expanded(
-                          child: Text(
+                          AppGap.h8,
+                          Text(
                             p['desc'] as String,
                             style: const TextStyle(
                               fontSize: 13.5,
@@ -820,12 +932,65 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                               height: 1.5,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                )
+              else
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final crossAxisCount = constraints.maxWidth < 1000 ? 2 : 3;
+                    return Wrap(
+                      spacing: 24,
+                      runSpacing: 24,
+                      children: pillars.map((p) {
+                        final cardWidth = (constraints.maxWidth - (crossAxisCount - 1) * 24) / crossAxisCount;
+                        return Container(
+                          width: cardWidth,
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0D9488).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(p['icon'] as IconData, color: const Color(0xFF0D9488), size: 24),
+                              ),
+                              AppGap.h16,
+                              Text(
+                                p['title'] as String,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF0F172A),
+                                ),
+                              ),
+                              AppGap.h8,
+                              Text(
+                                p['desc'] as String,
+                                style: const TextStyle(
+                                  fontSize: 13.5,
+                                  color: Color(0xFF475569),
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
             ],
           ),
         ),
@@ -833,7 +998,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     );
   }
 
-  Widget _buildLiveWorkflowShowcase(bool isMobile) {
+  Widget _buildLiveWorkflowShowcase(bool isMobile, double screenWidth) {
     final simulations = [
       {
         'title': 'Pediatric Dosing Engine',
@@ -859,8 +1024,8 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
       key: _featuresKey,
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 40,
-        vertical: isMobile ? 48 : 80,
+        horizontal: isMobile ? 18 : 40,
+        vertical: isMobile ? 40 : 80,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -881,39 +1046,42 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 'Deterministic Safety in Action',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: isMobile ? 26 : 38,
+                  fontSize: isMobile ? 24 : 38,
                   fontWeight: FontWeight.w800,
                   color: const Color(0xFF0F172A),
                   letterSpacing: -0.5,
                 ),
               ),
-              AppGap.h32,
+              AppGap.h28,
               Wrap(
-                spacing: 12,
+                spacing: 8,
                 runSpacing: 8,
                 alignment: WrapAlignment.center,
                 children: List.generate(simulations.length, (index) {
                   final isSelected = _selectedSimTab == index;
                   return ChoiceChip(
-                    label: Text(simulations[index]['title']!),
+                    label: Text(
+                      simulations[index]['title']!,
+                      style: TextStyle(
+                        fontSize: isMobile ? 12.5 : 13.5,
+                        fontWeight: FontWeight.w700,
+                        color: isSelected ? Colors.white : const Color(0xFF334155),
+                      ),
+                    ),
                     selected: isSelected,
                     onSelected: (val) {
                       if (val) setState(() => _selectedSimTab = index);
                     },
                     selectedColor: const Color(0xFF0D9488),
-                    labelStyle: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: isSelected ? Colors.white : const Color(0xFF334155),
-                    ),
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   );
                 }),
               ),
-              AppGap.h28,
+              AppGap.h24,
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(isMobile ? 16 : 24),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -929,20 +1097,28 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 6,
                       children: [
-                        const Icon(Icons.input_rounded, size: 16, color: Color(0xFF64748B)),
-                        AppGap.w8,
-                        const Text(
-                          'CLINICAL PROMPT / QUERY:',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.8,
-                            color: Color(0xFF64748B),
-                          ),
+                        const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.input_rounded, size: 16, color: Color(0xFF64748B)),
+                            AppGap.w8,
+                            Text(
+                              'CLINICAL PROMPT / QUERY:',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.8,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                          ],
                         ),
-                        const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
@@ -956,21 +1132,21 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                         ),
                       ],
                     ),
-                    AppGap.h8,
+                    AppGap.h10,
                     Text(
                       '"${simulations[_selectedSimTab]['query']}"',
-                      style: const TextStyle(
-                        fontSize: 15,
+                      style: TextStyle(
+                        fontSize: isMobile ? 14 : 15,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A),
+                        color: const Color(0xFF0F172A),
                       ),
                     ),
-                    const Divider(height: 32),
-                    Row(
+                    const Divider(height: 28),
+                    const Row(
                       children: [
-                        const Icon(Icons.output_rounded, size: 16, color: Color(0xFF0D9488)),
+                        Icon(Icons.output_rounded, size: 16, color: Color(0xFF0D9488)),
                         AppGap.w8,
-                        const Text(
+                        Text(
                           'TABIB SAFETY PROTOCOL RESPONSE:',
                           style: TextStyle(
                             fontSize: 12,
@@ -981,10 +1157,10 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                         ),
                       ],
                     ),
-                    AppGap.h12,
+                    AppGap.h10,
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF8FAFC),
                         borderRadius: BorderRadius.circular(10),
@@ -992,11 +1168,11 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       ),
                       child: Text(
                         simulations[_selectedSimTab]['output']!,
-                        style: const TextStyle(
-                          fontSize: 13.5,
-                          height: 1.6,
+                        style: TextStyle(
+                          fontSize: isMobile ? 12 : 13.5,
+                          height: 1.55,
                           fontFamily: 'monospace',
-                          color: Color(0xFF1E293B),
+                          color: const Color(0xFF1E293B),
                         ),
                       ),
                     ),
@@ -1010,14 +1186,37 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     );
   }
 
-  Widget _buildSafetySpecsMatrix(bool isMobile) {
+  Widget _buildSafetySpecsMatrix(bool isMobile, double screenWidth) {
+    final safetyItems = [
+      {
+        'dimension': 'Pharmacology Dosages',
+        'vulnerability': 'Unbounded dose hallucinations and fabricated safe limits.',
+        'guard': '4,000 mg Paracetamol ceiling lock & SQLite verified records.',
+      },
+      {
+        'dimension': 'Pediatric Formulations',
+        'vulnerability': 'Approximated adult fraction doses causing severe hepatic toxicity.',
+        'guard': 'Exact mg/kg equation with commercial suspension (mg/mL) math.',
+      },
+      {
+        'dimension': 'Surgical Emergencies',
+        'vulnerability': 'Suggests oral pain relievers, dangerously masking acute surgical abdomen.',
+        'guard': 'Sub-millisecond triage interceptor disallowing analgesic masking.',
+      },
+      {
+        'dimension': 'Patient Privacy',
+        'vulnerability': 'Sends telemetry and query to cloud third-party servers.',
+        'guard': '100% Air-Gapped local runtime, zero cloud ingress/egress.',
+      },
+    ];
+
     return Container(
       key: _safetyKey,
       width: double.infinity,
       color: Colors.white,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 40,
-        vertical: isMobile ? 48 : 80,
+        horizontal: isMobile ? 18 : 40,
+        vertical: isMobile ? 40 : 80,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -1038,73 +1237,200 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 'Deterministic Safety Matrix',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: isMobile ? 26 : 38,
+                  fontSize: isMobile ? 24 : 38,
                   fontWeight: FontWeight.w800,
                   color: const Color(0xFF0F172A),
                   letterSpacing: -0.5,
                 ),
               ),
-              AppGap.h32,
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                ),
-                child: Table(
-                  border: TableBorder.symmetric(
-                    inside: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+              AppGap.h28,
+              if (isMobile)
+                Column(
+                  children: safetyItems.map((item) {
+                    return _buildMobileSafetyCard(
+                      dimension: item['dimension']!,
+                      llmVulnerability: item['vulnerability']!,
+                      tabibGuard: item['guard']!,
+                    );
+                  }).toList(),
+                )
+              else
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
-                  columnWidths: const {
-                    0: FlexColumnWidth(2.2),
-                    1: FlexColumnWidth(2.0),
-                    2: FlexColumnWidth(3.0),
-                  },
-                  children: [
-                    TableRow(
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  child: Table(
+                    border: TableBorder.symmetric(
+                      inside: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+                    ),
+                    columnWidths: const {
+                      0: FlexColumnWidth(2.2),
+                      1: FlexColumnWidth(2.0),
+                      2: FlexColumnWidth(3.0),
+                    },
+                    children: [
+                      TableRow(
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        children: [
+                          _buildTableHeaderCell('Clinical Dimension'),
+                          _buildTableHeaderCell('Standard LLM Vulnerability'),
+                          _buildTableHeaderCell('Tabib Architectural Guard'),
+                        ],
                       ),
-                      children: [
-                        _buildTableHeaderCell('Clinical Dimension'),
-                        _buildTableHeaderCell('Standard LLM Vulnerability'),
-                        _buildTableHeaderCell('Tabib Architectural Guard'),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _buildTableCell('Pharmacology Dosages', isBold: true),
-                        _buildTableCell('Unbounded dose hallucinations'),
-                        _buildTableCell('4,000 mg Paracetamol ceiling lock & SQLite verified records'),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _buildTableCell('Pediatric Formulations', isBold: true),
-                        _buildTableCell('Approximated adult fraction doses'),
-                        _buildTableCell('Exact mg/kg equation with commercial suspension (mg/mL) math'),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _buildTableCell('Surgical Emergencies', isBold: true),
-                        _buildTableCell('Suggests oral pain relievers'),
-                        _buildTableCell('Sub-millisecond triage interceptor disallowing analgesic masking'),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _buildTableCell('Patient Privacy', isBold: true),
-                        _buildTableCell('Sends telemetry and query to cloud'),
-                        _buildTableCell('100% Air-Gapped local runtime, zero cloud ingress/egress'),
-                      ],
-                    ),
-                  ],
+                      ...safetyItems.map((item) {
+                        return TableRow(
+                          children: [
+                            _buildTableCell(item['dimension']!, isBold: true),
+                            _buildTableCell(item['vulnerability']!),
+                            _buildTableCell(item['guard']!),
+                          ],
+                        );
+                      }),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildMobileSafetyCard({
+    required String dimension,
+    required String llmVulnerability,
+    required String tabibGuard,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.verified_outlined, size: 18, color: Color(0xFF0D9488)),
+                AppGap.w8,
+                Expanded(
+                  child: Text(
+                    dimension,
+                    style: const TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF2F2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFFECACA)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.cancel_rounded, size: 14, color: Color(0xFFDC2626)),
+                          AppGap.w6,
+                          Text(
+                            'Standard LLM Vulnerability',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFDC2626),
+                            ),
+                          ),
+                        ],
+                      ),
+                      AppGap.h4,
+                      Text(
+                        llmVulnerability,
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          color: Color(0xFF7F1D1D),
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AppGap.h10,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0FDFA),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF99F6E4)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.check_circle_rounded, size: 14, color: Color(0xFF0D9488)),
+                          AppGap.w6,
+                          Text(
+                            'Tabib Architectural Guard',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF0D9488),
+                            ),
+                          ),
+                        ],
+                      ),
+                      AppGap.h4,
+                      Text(
+                        tabibGuard,
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF134E4A),
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1138,13 +1464,13 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     );
   }
 
-  Widget _buildCtaBanner(bool isMobile) {
+  Widget _buildCtaBanner(bool isMobile, double screenWidth) {
     return Container(
       key: _docsKey,
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 40,
-        vertical: isMobile ? 48 : 72,
+        horizontal: isMobile ? 18 : 40,
+        vertical: isMobile ? 40 : 72,
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -1161,39 +1487,37 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
           constraints: const BoxConstraints(maxWidth: 900),
           child: Column(
             children: [
-              const Icon(Icons.health_and_safety_rounded, color: Colors.white, size: 48),
-              AppGap.h20,
+              const Icon(Icons.health_and_safety_rounded, color: Colors.white, size: 44),
+              AppGap.h16,
               Text(
                 'Equip Your Clinical Workflow with Local AI',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: isMobile ? 26 : 38,
+                  fontSize: isMobile ? 22 : 38,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
                   letterSpacing: -0.5,
                 ),
               ),
-              AppGap.h16,
+              AppGap.h12,
               const Text(
                 'Free, open source, and built for austere healthcare environments without internet access.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   color: Color(0xFFCCFBF1),
                   height: 1.5,
                 ),
               ),
-              AppGap.h32,
-              Wrap(
-                spacing: 16,
-                runSpacing: 12,
-                alignment: WrapAlignment.center,
-                children: [
-                  ElevatedButton.icon(
+              AppGap.h28,
+              if (isMobile) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF0F766E),
-                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
@@ -1202,14 +1526,18 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                     icon: const Icon(Icons.android_rounded, size: 22),
                     label: const Text(
                       'Download APK for Android',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                     ),
                   ),
-                  OutlinedButton.icon(
+                ),
+                AppGap.h12,
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
                       side: const BorderSide(color: Colors.white, width: 1.5),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
@@ -1218,11 +1546,51 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                     icon: const Icon(Icons.menu_book_rounded, size: 20),
                     label: const Text(
                       'Read Full Documentation',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ] else ...[
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0F766E),
+                        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () {
+                        _launchExternalUrl(_apkDownloadUrl);
+                      },
+                      icon: const Icon(Icons.android_rounded, size: 22),
+                      label: const Text(
+                        'Download APK for Android',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white, width: 1.5),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () {
+                        _launchExternalUrl('$_githubRepoUrl#readme');
+                      },
+                      icon: const Icon(Icons.menu_book_rounded, size: 20),
+                      label: const Text(
+                        'Read Full Documentation',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
@@ -1230,59 +1598,98 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     );
   }
 
-  Widget _buildFooter(bool isMobile) {
+  Widget _buildFooter(bool isMobile, double screenWidth) {
     return Container(
       width: double.infinity,
       color: const Color(0xFF0F172A),
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 40,
-        vertical: isMobile ? 32 : 48,
+        horizontal: isMobile ? 18 : 40,
+        vertical: isMobile ? 28 : 48,
       ),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1100),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0D9488),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.local_hospital_rounded,
-                          color: Colors.white,
-                          size: 18,
-                        ),
+              if (isMobile) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0D9488),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      AppGap.w10,
-                      const Text(
-                        'Tabib AI',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
+                      child: const Icon(
+                        Icons.local_hospital_rounded,
+                        color: Colors.white,
+                        size: 18,
                       ),
-                    ],
-                  ),
-                  TextButton.icon(
-                    style: TextButton.styleFrom(foregroundColor: const Color(0xFF94A3B8)),
-                    onPressed: () {
-                      _launchExternalUrl(_githubRepoUrl);
-                    },
-                    icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                    label: const Text('GitHub Repository'),
-                  ),
-                ],
-              ),
-              const Divider(color: Color(0xFF1E293B), height: 40),
+                    ),
+                    AppGap.w10,
+                    const Text(
+                      'Tabib AI',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                AppGap.h12,
+                TextButton.icon(
+                  style: TextButton.styleFrom(foregroundColor: const Color(0xFF94A3B8)),
+                  onPressed: () {
+                    _launchExternalUrl(_githubRepoUrl);
+                  },
+                  icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                  label: const Text('GitHub Repository'),
+                ),
+              ] else ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF0D9488),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.local_hospital_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                        AppGap.w10,
+                        const Text(
+                          'Tabib AI',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TextButton.icon(
+                      style: TextButton.styleFrom(foregroundColor: const Color(0xFF94A3B8)),
+                      onPressed: () {
+                        _launchExternalUrl(_githubRepoUrl);
+                      },
+                      icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                      label: const Text('GitHub Repository'),
+                    ),
+                  ],
+                ),
+              ],
+              const Divider(color: Color(0xFF1E293B), height: 36),
               const Text(
                 'CLINICAL DISCLAIMER: Tabib AI is designed solely for clinical decision support, triage assistance, and educational reference. It does not establish a doctor-patient relationship and must never supersede in-person physical clinical examination, emergency services, or clinical judgment of licensed medical personnel.',
                 textAlign: TextAlign.center,
@@ -1292,7 +1699,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   color: Color(0xFF64748B),
                 ),
               ),
-              AppGap.h20,
+              AppGap.h16,
               Text(
                 '© ${DateTime.now().year} Tabib AI. Released under Apache-2.0 License.',
                 style: const TextStyle(

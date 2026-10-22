@@ -41,7 +41,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       await medicineDb.init();
       await historyDb.init();
-      await inferenceService.initContext(event.modelPath);
+      if (!inferenceService.isReady ||
+          inferenceService.activeModelPath != event.modelPath) {
+        await inferenceService.initContext(event.modelPath);
+      }
 
       _currentSessionId = 'session_${DateTime.now().millisecondsSinceEpoch}';
       _sessionTitle = '';

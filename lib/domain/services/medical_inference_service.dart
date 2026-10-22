@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:llamadart/llamadart.dart';
 import '../../data/datasources/medicine_local_db.dart';
 import '../../data/datasources/model_downloader.dart';
@@ -24,8 +25,63 @@ class MedicalInferenceService {
   bool _isContextInitialized = false;
   StreamSubscription<String>? _tokenSubscription;
   StreamController<String>? _activeTokenStreamController;
+  static int? _cachedDeviceTotalRamMb;
 
-  bool get isReady => _isContextInitialized && _engine != null;
+  /// Retrieves the total physical RAM in MB on Linux/Android platforms.
+  static int? getDeviceTotalRamMb() {
+    if (_cachedDeviceTotalRamMb != null) return _cachedDeviceTotalRamMb;
+    if (Platform.isAndroid || Platform.isLinux) {
+      try {
+        final file = File('/proc/meminfo');
+        if (file.existsSync()) {
+          final lines = file.readAsLinesSync();
+          for (final line in lines) {
+            if (line.startsWith('MemTotal:')) {
+              final match = RegExp(r'\d+').firstMatch(line);
+              if (match != null) {
+                final kb = int.tryParse(match.group(0)!);
+                if (kb != null) {
+                  _cachedDeviceTotalRamMb = kb ~/ 1024;
+                  return _cachedDeviceTotalRamMb;
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('[MedicalInferenceService] Could not read /proc/meminfo: $e');
+      }
+    }
+    return null;
+  }
+
+  /// Determines if the device's physical RAM is below the safe threshold (5.5 GB)
+  /// required to run a 1.93 GB 3-Billion parameter LLM without triggering Android's
+  /// kernel LowMemoryKiller (SIGKILL).
+  static bool isLowMemoryForModel(String? modelPath) {
+    final ram = getDeviceTotalRamMb();
+    if (ram == null) return false;
+    if (ram >= 5500) return false; // 6GB+ RAM is safe
+
+    if (modelPath != null) {
+      try {
+        final file = File(modelPath);
+        if (file.existsSync()) {
+          final size = file.lengthSync();
+          // If the model file is >= 1.2 GB (e.g. Qwen2.5-3B is ~1.93GB), low-RAM devices (< 5.5GB)
+          // will breach kernel watermarks during full forward passes.
+          if (size >= 1200 * 1024 * 1024) {
+            return true;
+          }
+        }
+      } catch (_) {}
+    }
+    return false;
+  }
+
+  bool get isReady =>
+      _isContextInitialized &&
+      (_engine != null || isLowMemoryForModel(_activeModelPath));
   String? get activeModelPath => _activeModelPath;
 
   Future<void> resetContext() async {
@@ -51,6 +107,26 @@ class MedicalInferenceService {
         return false;
       }
 
+      // Safeguard for devices with <= 4GB RAM to prevent kernel Out-Of-Memory SIGKILL
+      if (isLowMemoryForModel(modelPath)) {
+        debugPrint(
+          '[MedicalInferenceService] Device RAM (${getDeviceTotalRamMb()} MB < 5.5 GB) detected. Using zero-RAM offline clinical intelligence mode.',
+        );
+        _activeModelPath = modelPath;
+        _isContextInitialized = true;
+        return true;
+      }
+
+      // Prevent reloading the 1.93GB model if it is already loaded in memory
+      if (_isContextInitialized &&
+          _engine != null &&
+          _activeModelPath == modelPath) {
+        debugPrint(
+          '[MedicalInferenceService] LlamaEngine already active for $modelPath. Reusing instance.',
+        );
+        return true;
+      }
+
       if (_engine != null) {
         _engine?.cancelGeneration();
         await _engine!.dispose();
@@ -60,17 +136,25 @@ class MedicalInferenceService {
       _engine = await LlamaEngine.load(
         LlamaModel(ModelSource.path(modelPath)),
         params: const ModelParams(
-          contextSize: 2048,
-          device: ComputeDevice.auto,
+          contextSize: 512,
+          batchSize: 64,
+          microBatchSize: 32,
+          numberOfThreads: 2,
+          numberOfThreadsBatch: 2,
+          device: ComputeDevice.cpu,
+          preferredBackend: GpuBackend.cpu,
           gpuLayers: 0,
-          numberOfThreads: 4,
+          useMmap: true,
+          useMlock: false,
         ),
       );
 
       _activeModelPath = modelPath;
       _isContextInitialized = true;
+      debugPrint('[MedicalInferenceService] LlamaEngine successfully initialized with memory-optimized profile.');
       return true;
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('[MedicalInferenceService] initContext failed: $e\n$st');
       _isContextInitialized = false;
       return false;
     }
@@ -613,13 +697,27 @@ Symptoms: $cleanQuery
     String? originalQuery,
   }) async {
     try {
+      final currentModelPath =
+          _activeModelPath ?? await ModelDownloader().getModelFilePath();
+
+      if (isLowMemoryForModel(currentModelPath)) {
+        debugPrint(
+          '[MedicalInferenceService] Low-RAM safeguard active (${getDeviceTotalRamMb()} MB). Utilizing zero-RAM offline clinical synthesis to protect from kernel LMK.',
+        );
+        await _synthesizeOfflineClinicalNote(
+          prompt,
+          controller,
+          originalQuery: originalQuery,
+        );
+        return;
+      }
+
       if (_engine == null || !_isContextInitialized) {
         try {
-          final modelPath = await ModelDownloader().getModelFilePath();
-          if (File(modelPath).existsSync()) {
-            final initSuccess = await initContext(modelPath);
+          if (File(currentModelPath).existsSync()) {
+            final initSuccess = await initContext(currentModelPath);
             if (!initSuccess) {
-              throw Exception('Model initialization failed for $modelPath.');
+              throw Exception('Model initialization failed for $currentModelPath.');
             }
           } else {
             await _synthesizeOfflineClinicalNote(prompt, controller, originalQuery: originalQuery);
@@ -731,10 +829,14 @@ Symptoms: $cleanQuery
                 trailingWindow.substring(trailingWindow.length - 80);
           }
         },
-        onError: (err) {
+        onError: (err) async {
+          debugPrint('[MedicalInferenceService] Generation error: $err');
           if (!controller.isClosed) {
-            controller.addError(err);
-            controller.close();
+            await _synthesizeOfflineClinicalNote(
+              prompt,
+              controller,
+              originalQuery: originalQuery,
+            );
           }
         },
         onDone: () {
@@ -745,10 +847,12 @@ Symptoms: $cleanQuery
         cancelOnError: true,
       );
     } catch (e) {
-      if (!controller.isClosed) {
-        controller.addError(e);
-        await controller.close();
-      }
+      debugPrint('[MedicalInferenceService] Generation exception: $e. Falling back to offline synthesis.');
+      await _synthesizeOfflineClinicalNote(
+        prompt,
+        controller,
+        originalQuery: originalQuery,
+      );
     }
   }
 
