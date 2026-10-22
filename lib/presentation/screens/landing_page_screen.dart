@@ -242,6 +242,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
   Widget _buildMobileDrawer(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -251,70 +252,107 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
               Row(
                 children: [
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: 38,
+                    height: 38,
                     decoration: BoxDecoration(
                       color: const Color(0xFF0D9488),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0D9488).withValues(alpha: 0.25),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: const Icon(
                       Icons.local_hospital_rounded,
                       color: Colors.white,
-                      size: 20,
+                      size: 22,
                     ),
                   ),
-                  AppGap.w10,
-                  const Text(
-                    'Tabib AI',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF0F172A),
-                    ),
+                  AppGap.w12,
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Tabib',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0F172A),
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          AppGap.w4,
+                          Text(
+                            'AI',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0D9488),
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        'CLINICAL INTELLIGENCE',
+                        style: TextStyle(
+                          fontSize: 8.5,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.1,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const Icon(Icons.close_rounded, color: Color(0xFF334155), size: 24),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
-              const Divider(height: 24),
-              ListTile(
-                leading: const Icon(Icons.featured_play_list_outlined, color: Color(0xFF0D9488), size: 20),
-                title: const Text('Features & Workflow', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+              const Divider(height: 28, color: Color(0xFFE2E8F0)),
+              _buildDrawerItem(
+                icon: Icons.featured_play_list_outlined,
+                title: 'Features & Workflow',
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_featuresKey);
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.account_tree_outlined, color: Color(0xFF0D9488), size: 20),
-                title: const Text('Architecture', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+              _buildDrawerItem(
+                icon: Icons.account_tree_outlined,
+                title: 'Architecture',
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_architectureKey);
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.verified_user_outlined, color: Color(0xFF0D9488), size: 20),
-                title: const Text('Safety Core Matrix', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+              _buildDrawerItem(
+                icon: Icons.verified_user_outlined,
+                title: 'Safety Core Matrix',
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_safetyKey);
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.description_outlined, color: Color(0xFF0D9488), size: 20),
-                title: const Text('Documentation', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+              _buildDrawerItem(
+                icon: Icons.description_outlined,
+                title: 'Documentation',
                 onTap: () {
                   Navigator.pop(context);
                   _scrollToKey(_docsKey);
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.code_rounded, color: Color(0xFF0D9488), size: 20),
-                title: const Text('GitHub Source', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+              _buildDrawerItem(
+                icon: Icons.code_rounded,
+                title: 'GitHub Source',
                 onTap: () {
                   Navigator.pop(context);
                   _launchExternalUrl(_githubRepoUrl);
@@ -328,17 +366,57 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 2,
+                  shadowColor: const Color(0xFF0D9488).withValues(alpha: 0.35),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
                   _launchExternalUrl(_apkDownloadUrl);
                 },
-                icon: const Icon(Icons.download_rounded, size: 20),
-                label: const Text('Download Android APK (v1.0)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                icon: const Icon(Icons.download_rounded, size: 20, color: Colors.white),
+                label: const Text(
+                  'Download Android APK (v1.0)',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: Colors.white),
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        leading: Container(
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0FDFA),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: const Color(0xFF0D9488), size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14.5,
+            color: Color(0xFF1E293B),
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFF94A3B8), size: 20),
+        onTap: onTap,
       ),
     );
   }
